@@ -14,7 +14,10 @@ import { fileURLToPath } from "node:url";
 
 const apiDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const repoRoot = dirname(dirname(apiDir));
-const outDir = join(repoRoot, ".vercel/output");
+// On Vercel with Root Directory apps/api, Build Output must live under
+// that directory (apps/api/.vercel/output). Local/repo-root still works
+// because apiDir/.vercel/output is what the platform packs.
+const outDir = join(apiDir, ".vercel/output");
 const funcDir = join(outDir, "functions/api/index.func");
 const bun = process.env.BUN_BIN || "bun";
 
