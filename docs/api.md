@@ -79,6 +79,10 @@ request.
 - **An unreachable API fails open** (`unknown` lets the request through).
 - **`/sign-in`, `/grant-access`, `/eve` are ungated.** `/sign-in` is the only path a
   stranger may read; `/` joins it only when `IS_MARKETING` is set.
+- **`AUTH_ENABLED` closes the door until go-live.** Only the literal `true`
+  opens it. The sign-in page then shows no provider button, and the social,
+  SSO, and OAuth callback routes answer 503. Session reads stay up. See
+  `docs/environment.md`.
 - **There is no way past the key gate but to answer** — Skip stranded installs, every
   later company sitting `PENDING` with nothing saying so.
 

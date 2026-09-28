@@ -94,6 +94,26 @@ list fails closed.** Parsed on demand. `packages/auth/src/workspace.ts`.
 - **`isMarketing()` (`apps/app/lib/env.ts`) reads per request**, so a config change
   needs no rebuild. Declared in `apps/app/turbo.json` `passThroughEnv`.
 
+## `AUTH_ENABLED` — sign-in flag, off by default
+
+`"true"` opens sign-in. Anything else, including an unset variable, closes it.
+
+- **Only the literal `true`.**
+- **The API and the app both read it.** They are separate processes. Set it on
+  both, then redeploy both. One side left unset keeps that side closed.
+- **`isAuthEnabled()` (`packages/auth/src/env.ts`) reads on each auth request.**
+  The sign-in page calls `connection()` and the same function, so the page
+  follows the variable without a code change.
+- **Closed means two things.** `/sign-in` shows "Sign-in is not available yet."
+  and no provider button. `POST /api/auth/sign-in/social`, `POST /api/auth/sign-in/sso`,
+  `GET /api/auth/callback/:id`, `POST /api/auth/link-social`, and the SSO
+  callback answer **503** with that same sentence.
+- **A session still works.** `/api/auth/get-session` and `/api/auth/sign-out`
+  stay open. Slack connect (`/api/auth/oauth2/link`) stays open. Protected
+  pages still send a stranger to `/sign-in`, which now refuses the login.
+- **Go-live:** set `AUTH_ENABLED=true` on the API project and the app project,
+  then redeploy both. Do not put OAuth client secrets in the repo.
+
 ## Typed, validated env
 
 `apps/api/src/config/env.validation.ts` runs via `ConfigModule.forRoot({ validate })`,

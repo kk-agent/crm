@@ -1,6 +1,8 @@
+import { isAuthEnabled, SIGN_IN_CLOSED_MESSAGE } from "@crm/auth";
 import type { MailboxProviderId } from "@crm/auth/scopes";
 import type { Metadata } from "next";
 import { redirect, unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { AuthHeading, AuthShell } from "@/components/auth-shell";
 import { getSession } from "@/lib/session";
@@ -40,21 +42,52 @@ async function currentSession() {
 	}
 }
 
+function SignInClosed() {
+	return (
+		<AuthHeading
+			title="Sign-in is closed"
+			description={SIGN_IN_CLOSED_MESSAGE}
+		/>
+	);
+}
+
 export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
 	return (
 		<AuthShell>
 			<Suspense
 				fallback={
 					<AuthHeading
-						title="Welcome back"
+						title="Sign in"
 						description="Sign in with your account to continue."
 					/>
 				}
 			>
-				<SignIn searchParams={searchParams} />
+				<SignInGate searchParams={searchParams} />
 			</Suspense>
 		</AuthShell>
 	);
+}
+
+async function SignInGate({
+	searchParams,
+}: Pick<PageProps<"/sign-in">, "searchParams">) {
+	await connection();
+
+	if (!isAuthEnabled()) {
+		return <ClosedSignIn />;
+	}
+
+	return <SignIn searchParams={searchParams} />;
+}
+
+async function ClosedSignIn() {
+	const session = await currentSession();
+
+	if (session) {
+		redirect("/");
+	}
+
+	return <SignInClosed />;
 }
 
 async function SignIn({

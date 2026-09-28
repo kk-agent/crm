@@ -46,6 +46,10 @@ that writes session cookies; the Next.js app in `apps/app` reads those sessions
 straight from Postgres via `@crm/auth` and calls the routes above with
 `credentials: "include"`.
 
+`AUTH_ENABLED` must be the literal `true` or the sign-in routes answer 503.
+Session checks stay available. Set the same variable on the app so `/sign-in`
+stops offering Google, Microsoft, and SSO. See `docs/environment.md`.
+
 `AuthModule.forRoot({ auth })` mounts the Better Auth handler and registers a
 **global** `AuthGuard`, so every route is protected unless it opts out:
 

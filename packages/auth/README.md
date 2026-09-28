@@ -78,6 +78,10 @@ in development — as an authorised redirect URI.
 is the whole authorisation model: there are no roles and no organizations, so
 `src/workspace.ts` is worth reading before you change anything here.
 
+`AUTH_ENABLED` decides whether sign-in runs at all. Only the literal `true`
+opens it. Until then, the auth hook answers 503 on the social, SSO, and OAuth
+callback routes. `get-session` and `sign-out` stay open.
+
 ## Changing the schema
 
 Adding a plugin or an additional user field changes the database schema. After
