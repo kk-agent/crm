@@ -55,6 +55,35 @@ describe("Auth (e2e)", () => {
 		expect(response.status).not.toBe(404);
 	});
 
+	it("refuses social sign-in until AUTH_ENABLED is true", async () => {
+		const previous = process.env.AUTH_ENABLED;
+		delete process.env.AUTH_ENABLED;
+
+		try {
+			const response = await request(app.getHttpServer())
+				.post("/api/auth/sign-in/social")
+				.set("origin", "http://localhost:3000")
+				.send({
+					provider: "google",
+					callbackURL: "http://localhost:3000/",
+				});
+
+			expect(response.status).toBe(503);
+			expect(response.body.message).toBe("Sign-in is not available yet.");
+		} finally {
+			if (previous === undefined) delete process.env.AUTH_ENABLED;
+			else process.env.AUTH_ENABLED = previous;
+		}
+	});
+
+	it("still answers get-session while sign-in is closed", async () => {
+		const response = await request(app.getHttpServer()).get(
+			"/api/auth/get-session",
+		);
+
+		expect(response.status).not.toBe(503);
+	});
+
 	it("lets the sign-in page read what it may offer", async () => {
 		const response = await request(app.getHttpServer())
 			.get("/api/trpc/sso.signInOptions")

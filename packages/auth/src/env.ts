@@ -79,4 +79,8 @@ export function isSlackConfigured(): boolean {
 	return env.slack !== undefined;
 }
 
+export function isAuthEnabled(): boolean {
+	return process.env.AUTH_ENABLED === "true";
+}
+
 export { apiUrl, appUrl };

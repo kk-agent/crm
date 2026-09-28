@@ -9,6 +9,7 @@ export { AUTH_COOKIE_PREFIX, SESSION_COOKIE_NAME } from "./cookies";
 export {
 	apiUrl,
 	appUrl,
+	isAuthEnabled,
 	isGoogleConfigured,
 	isMicrosoftConfigured,
 	isSlackConfigured,
@@ -52,6 +53,7 @@ export {
 	signsInWithGoogle,
 	signsInWithMicrosoft,
 } from "./scopes";
+export { SIGN_IN_CLOSED_MESSAGE } from "./sign-in-gate";
 export { onSignedIn, type SignedInHandler } from "./signed-in";
 export {
 	describeSlackScopes,

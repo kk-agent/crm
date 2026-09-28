@@ -4,7 +4,7 @@ import { db } from "@crm/db";
 import { schemas } from "@crm/validation";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { organization } from "better-auth/plugins/organization";
 import { API_KEY_EXPIRATION, API_KEY_HEADER, API_KEY_PREFIX } from "./api-keys";
@@ -18,6 +18,7 @@ import {
 	SLACK_PROVIDER_ID,
 	SYNC_SCOPES,
 } from "./scopes";
+import { signInClosed } from "./sign-in-gate";
 import { notifySignedIn } from "./signed-in";
 import { slackConnectGuard } from "./slack-connect";
 import { rememberSlackInstall, replaceSlackConnection } from "./slack-grant";
@@ -118,7 +119,10 @@ export const auth = betterAuth({
 
 	trustedOrigins: [...env.trustedOrigins],
 	hooks: {
-		before: slackConnectGuard,
+		before: createAuthMiddleware(async (ctx) => {
+			await signInClosed(ctx);
+			await slackConnectGuard(ctx);
+		}),
 	},
 
 	plugins: [

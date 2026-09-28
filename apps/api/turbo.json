@@ -20,6 +20,7 @@
 			"persistent": true,
 			"passThroughEnv": [
 				"AUTH_COOKIE_DOMAIN",
+				"AUTH_ENABLED",
 				"AUTH_TRUSTED_ORIGINS",
 				"BLOB_READ_WRITE_TOKEN",
 				"BETTER_AUTH_SECRET",
@@ -38,6 +39,7 @@
 		"test": {
 			"passThroughEnv": [
 				"AUTH_COOKIE_DOMAIN",
+				"AUTH_ENABLED",
 				"AUTH_TRUSTED_ORIGINS",
 				"BLOB_READ_WRITE_TOKEN",
 				"BETTER_AUTH_SECRET",

@@ -50,6 +50,10 @@ export class EnvironmentVariables {
 
 	@IsOptional()
 	@IsString()
+	AUTH_ENABLED?: string;
+
+	@IsOptional()
+	@IsString()
 	GOOGLE_CLIENT_ID?: string;
 
 	@IsOptional()
